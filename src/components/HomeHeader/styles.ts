@@ -1,4 +1,5 @@
 import styled from 'styled-components/native';
+import { Image } from 'expo-image';
 
 export const Container = styled.View`
   width: 100%;
@@ -6,6 +7,12 @@ export const Container = styled.View`
   flex-direction: row;
   align-items: center;
   background-color: ${({ theme }) => theme.COLORS.GRAY_700};
+`;
+
+export const Picture = styled(Image)`
+  width: 54px;
+  height: 54px;
+  border-radius: 7px;
 `;
 
 export const Greeting = styled.View`
