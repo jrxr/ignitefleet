@@ -1,3 +1,4 @@
+import { Button } from "../../components/Button";
 import { Header } from "../../components/Header";
 import { LicensePlateInput } from "../../components/LicensePlateInput";
 import { TextAreaInput } from "../../components/TextAreaInput";
@@ -12,9 +13,11 @@ export function Departure() {
         <LicensePlateInput label="Placa do veículo" placeholder="BRA1234" />
 
         <TextAreaInput
-          label="Finalizade"
+          label="Finalidade"
           placeholder="Vou utilizar o veículo para..."
         />
+
+        <Button title="Registrar Saída" />
       </Content>
     </Container>
   );
