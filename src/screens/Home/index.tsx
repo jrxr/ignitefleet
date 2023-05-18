@@ -2,13 +2,14 @@ import { Alert } from "react-native";
 import { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 
-import { useQuery, useRealm } from '../../libs/realm';
+import { useQuery, useRealm } from "../../libs/realm";
 import { Historic } from "../../libs/realm/schemas/Historic";
 
 import { HomeHeader } from "../../components/HomeHeader";
 import { CarStatus } from "../../components/CarStatus";
 
 import { Container, Content } from "./styles";
+import { HistoricCard } from "../../components/HistoricCard";
 
 export function Home() {
   const [vehicleInUse, setVehicleInUse] = useState<Historic | null>(null);
@@ -19,10 +20,10 @@ export function Home() {
   const realm = useRealm();
 
   function handleRegisterMoviment() {
-    if(vehicleInUse?._id) {
-      navigate('arrival', { id: vehicleInUse._id.toString() });
+    if (vehicleInUse?._id) {
+      navigate("arrival", { id: vehicleInUse._id.toString() });
     } else {
-      navigate('departure')
+      navigate("departure");
     }
   }
 
@@ -40,22 +41,24 @@ export function Home() {
   }
 
   function fetchHistoric() {
-    const response = historic.filtered("status='arrival' SORT(created_at DESC)");
-    console.log(response)
+    const response = historic.filtered(
+      "status='arrival' SORT(created_at DESC)"
+    );
+    console.log(response);
   }
 
   useEffect(() => {
     fetchVehicleInUse();
-  },[])
+  }, []);
 
   useEffect(() => {
-    realm.addListener('change', () => fetchVehicleInUse())
-    return () => realm.removeListener('change', fetchVehicleInUse);
+    realm.addListener("change", () => fetchVehicleInUse());
+    return () => realm.removeListener("change", fetchVehicleInUse);
   }, []);
 
   useEffect(() => {
     fetchHistoric();
-  },[historic]); 
+  }, [historic]);
 
   return (
     <Container>
@@ -65,6 +68,10 @@ export function Home() {
         <CarStatus
           licensePlate={vehicleInUse?.license_plate}
           onPress={handleRegisterMoviment}
+        />
+
+        <HistoricCard
+          data={{ created: "20/04", licensePlate: "XXX1234", isSync: false }}
         />
       </Content>
     </Container>
