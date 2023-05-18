@@ -1,7 +1,7 @@
-import { Alert } from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { Alert } from "react-native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 
-import { useObject, useRealm } from '../../libs/realm';
+import { useObject, useRealm } from "../../libs/realm";
 import { Historic } from "../../libs/realm/schemas/Historic";
 import { BSON } from "realm";
 
@@ -32,22 +32,39 @@ export function Arrival() {
   const historic = useObject(Historic, new BSON.UUID(id));
 
   function handleRemoveVehicleUsage() {
-    Alert.alert(
-      'Cancelar',
-      'Cancelar a utilização do veículo?',
-      [
-        { text: 'Não', style: 'cancel' },
-        { text: 'Sim', onPress: () => removeVehicleUsage() },
-      ]
-    )
+    Alert.alert("Cancelar", "Cancelar a utilização do veículo?", [
+      { text: "Não", style: "cancel" },
+      { text: "Sim", onPress: () => removeVehicleUsage() },
+    ]);
   }
 
   function removeVehicleUsage() {
-    realm.write(() =>{
-      realm.delete(historic)
+    realm.write(() => {
+      realm.delete(historic);
     });
 
     goBack();
+  }
+
+  function handleArrivalRegister() {
+    try {
+      if (!historic) {
+        return Alert.alert(
+          "Erro",
+          "Não foi possível obter os dados para registrar a chegada do veículo."
+        );
+      }
+
+      realm.write(() => {
+        historic.status = "arrival";
+        historic.updated_at = new Date();
+      });
+
+      Alert.alert("Chegada", "Chegada registrada com sucesso.");
+      goBack();
+    } catch (error) {
+      Alert.alert("Erro", "Não foi possível registar a chegada do veículo.");
+    }
   }
 
   return (
@@ -65,7 +82,7 @@ export function Arrival() {
         <Footer>
           <ButtonIcon icon={X} onPress={handleRemoveVehicleUsage} />
 
-          <Button title="Registrar chegada" />
+          <Button title="Registrar chegada" onPress={handleArrivalRegister} />
         </Footer>
       </Content>
     </Container>
