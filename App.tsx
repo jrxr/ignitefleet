@@ -10,6 +10,8 @@ import {
   Roboto_400Regular,
   Roboto_700Bold,
 } from "@expo-google-fonts/roboto";
+import { useNetInfo } from '@react-native-community/netinfo';
+
 import { WifiSlash } from 'phosphor-react-native';
 
 import theme from "./src/theme";
@@ -29,6 +31,8 @@ export default function App() {
     Roboto_700Bold,
   });
 
+  const netInfo = useNetInfo();
+
   if (!fontsLoaded) {
     return <Loading />;
   }
@@ -37,10 +41,13 @@ export default function App() {
     <AppProvider id={REALM_APP_ID}>
       <ThemeProvider theme={theme}>
         <SafeAreaProvider style={{ backgroundColor: theme.COLORS.GRAY_800 }}>
-          <TopMessage 
-            title='Você está off-line'
-            icon={WifiSlash}
-          />
+        {
+            !netInfo.isConnected &&
+            <TopMessage 
+              title='Você está off-line'
+              icon={WifiSlash}
+            />
+          }
 
           <StatusBar
             barStyle="light-content"
