@@ -19,16 +19,18 @@ import { Button } from "../../components/Button";
 import { Header } from "../../components/Header";
 import { LicensePlateInput } from "../../components/LicensePlateInput";
 import { TextAreaInput } from "../../components/TextAreaInput";
+import { Loading } from "../../components/Loading";
 
 import { Container, Content, Message } from "./styles";
 
 import { licensePlateValidate } from "../../utils/licensePlateValidate";
-import { getAddressLocation } from '../../utils/getAddressLocation';
+import { getAddressLocation } from "../../utils/getAddressLocation";
 
 export function Departure() {
   const [description, setDescription] = useState("");
   const [licensePlate, setLicensePlate] = useState("");
   const [isRegistering, setIsResgistering] = useState(false);
+  const [isLoadingLocation, setIsLoadingLocation] = useState(true);
 
   const [locationForegroundPermission, requestLocationForegroundPermission] =
     useForegroundPermissions();
@@ -99,13 +101,18 @@ export function Departure() {
       },
       (location) => {
         getAddressLocation(location.coords)
-        .then(address => {
-          console.log(address)
-        })
+          .then((address) => {
+            console.log(address);
+          })
+          .finally(() => setIsLoadingLocation(false));
       }
     ).then((response) => (subscription = response));
 
-    return () => subscription.remove();
+    return () => {
+      if (subscription) {
+        subscription.remove();
+      }
+    };
   }, [locationForegroundPermission?.granted]);
 
   if (!locationForegroundPermission?.granted) {
@@ -119,6 +126,10 @@ export function Departure() {
         </Message>
       </Container>
     );
+  }
+
+  if (isLoadingLocation) {
+    return <Loading />;
   }
 
   return (
