@@ -21,7 +21,9 @@ import { LicensePlateInput } from "../../components/LicensePlateInput";
 import { TextAreaInput } from "../../components/TextAreaInput";
 
 import { Container, Content, Message } from "./styles";
+
 import { licensePlateValidate } from "../../utils/licensePlateValidate";
+import { getAddressLocation } from '../../utils/getAddressLocation';
 
 export function Departure() {
   const [description, setDescription] = useState("");
@@ -96,7 +98,10 @@ export function Departure() {
         timeInterval: 1000,
       },
       (location) => {
-        console.log(location);
+        getAddressLocation(location.coords)
+        .then(address => {
+          console.log(address)
+        })
       }
     ).then((response) => (subscription = response));
 
