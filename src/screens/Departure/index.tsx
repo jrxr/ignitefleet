@@ -25,12 +25,14 @@ import { Container, Content, Message } from "./styles";
 
 import { licensePlateValidate } from "../../utils/licensePlateValidate";
 import { getAddressLocation } from "../../utils/getAddressLocation";
+import { LocationInfo } from "../../components/LocationInfo";
 
 export function Departure() {
   const [description, setDescription] = useState("");
   const [licensePlate, setLicensePlate] = useState("");
   const [isRegistering, setIsResgistering] = useState(false);
   const [isLoadingLocation, setIsLoadingLocation] = useState(true);
+  const [currentAddress, setCurrentAddress] = useState<string | null>(null);
 
   const [locationForegroundPermission, requestLocationForegroundPermission] =
     useForegroundPermissions();
@@ -102,7 +104,9 @@ export function Departure() {
       (location) => {
         getAddressLocation(location.coords)
           .then((address) => {
-            console.log(address);
+            if (address) {
+              setCurrentAddress(address);
+            }
           })
           .finally(() => setIsLoadingLocation(false));
       }
@@ -139,6 +143,12 @@ export function Departure() {
       <KeyboardAwareScrollView extraHeight={100}>
         <ScrollView>
           <Content>
+            {currentAddress && (
+              <LocationInfo
+                label="Localização atual"
+                description={currentAddress}
+              />
+            )}
             <LicensePlateInput
               ref={licensePlateRef}
               label="Placa do veículo"
