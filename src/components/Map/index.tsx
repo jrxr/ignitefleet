@@ -37,6 +37,7 @@ export function Map({ coordinates, ...rest }: Props) {
         latitudeDelta: 0.005,
         longitudeDelta: 0.005,
       }}
+      onMapLoaded={onMapLoaded}
       {...rest}
     >
       <Marker identifier="departure" coordinate={coordinates[0]}>
