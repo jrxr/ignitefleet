@@ -20,7 +20,7 @@ import {
 import { Header } from "../../components/Header";
 import { Button } from "../../components/Button";
 import { getLastAsyncTimestamp } from "../../libs/asyncStorage/syncStorage";
-
+import { getStorageLocations } from "../../libs/asyncStorage/locationStorage";
 import { ButtonIcon } from "../../components/ButtonIcon";
 import { X } from "phosphor-react-native";
 
@@ -78,11 +78,17 @@ export function Arrival() {
     }
   }
 
+  async function getLocationsInfo() {
+    const lastSync = await getLastAsyncTimestamp();
+    const updatedAt = historic!.updated_at.getTime();
+    setDataNotSynced(updatedAt > lastSync);
+
+    const locationsStorage = await getStorageLocations();
+  }
+
   useEffect(() => {
-    getLastAsyncTimestamp().then((lastSync) =>
-      setDataNotSynced(historic!.updated_at.getTime() > lastSync)
-    );
-  }, []);
+    getLocationsInfo();
+  }, [historic]);
 
   return (
     <Container>
