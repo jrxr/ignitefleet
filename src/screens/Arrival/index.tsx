@@ -5,6 +5,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { useObject, useRealm } from "../../libs/realm";
 import { Historic } from "../../libs/realm/schemas/Historic";
 import { BSON } from "realm";
+import { stopLocationTask } from "../../tasks/backgroundLocationTask";
 
 import {
   Container,
@@ -54,7 +55,7 @@ export function Arrival() {
     goBack();
   }
 
-  function handleArrivalRegister() {
+  async function handleArrivalRegister() {
     try {
       if (!historic) {
         return Alert.alert(
@@ -62,6 +63,8 @@ export function Arrival() {
           "Não foi possível obter os dados para registrar a chegada do veículo."
         );
       }
+
+      await stopLocationTask();
 
       realm.write(() => {
         historic.status = "arrival";
