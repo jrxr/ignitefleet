@@ -1,5 +1,5 @@
 import { TextInput, ScrollView, Alert } from "react-native";
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react";
 import { CarSimple } from "phosphor-react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
@@ -28,6 +28,7 @@ import { Container, Content, Message } from "./styles";
 
 import { licensePlateValidate } from "../../utils/licensePlateValidate";
 import { getAddressLocation } from "../../utils/getAddressLocation";
+import { startLocationTask } from "../../tasks/backgroundLocationTask";
 import { LocationInfo } from "../../components/LocationInfo";
 
 export function Departure() {
@@ -67,18 +68,26 @@ export function Departure() {
         );
       }
 
-      if(!currentCoords?.latitude && !currentCoords?.longitude) {
-        return Alert.alert('Localização', 'Não foi possível obter a localização atual. Tente novamente.')
+      if (!currentCoords?.latitude && !currentCoords?.longitude) {
+        return Alert.alert(
+          "Localização",
+          "Não foi possível obter a localização atual. Tente novamente."
+        );
       }
 
       setIsResgistering(true);
 
-      const backgroundPermissions = await requestBackgroundPermissionsAsync()
+      const backgroundPermissions = await requestBackgroundPermissionsAsync();
 
-      if(!backgroundPermissions.granted) {
-        setIsResgistering(false)
-        return Alert.alert('Localização', 'É necessário permitir que o App tenha acesso localização em segundo plano. Acesse as configurações do dispositivo e habilite "Permitir o tempo todo."')
+      if (!backgroundPermissions.granted) {
+        setIsResgistering(false);
+        return Alert.alert(
+          "Localização",
+          'É necessário permitir que o App tenha acesso localização em segundo plano. Acesse as configurações do dispositivo e habilite "Permitir o tempo todo."'
+        );
       }
+
+      await startLocationTask();
 
       realm.write(() => {
         realm.create(
