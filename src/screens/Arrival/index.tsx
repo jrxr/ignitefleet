@@ -5,10 +5,10 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { useObject, useRealm } from "../../libs/realm";
 import { Historic } from "../../libs/realm/schemas/Historic";
 import { BSON } from "realm";
-import { LatLng } from 'react-native-maps';
+import { LatLng } from "react-native-maps";
 
 import { stopLocationTask } from "../../tasks/backgroundLocationTask";
-import { Map } from '../../components/Map';
+import { Map } from "../../components/Map";
 
 import {
   Container,
@@ -33,7 +33,7 @@ type RouteParamProps = {
 
 export function Arrival() {
   const [dataNotSynced, setDataNotSynced] = useState(false);
-  const [coordinates, setCoordinates] = useState<LatLng[]>([])
+  const [coordinates, setCoordinates] = useState<LatLng[]>([]);
 
   const route = useRoute();
   const { id } = route.params as RouteParamProps;
@@ -51,10 +51,12 @@ export function Arrival() {
     ]);
   }
 
-  function removeVehicleUsage() {
+  async function removeVehicleUsage() {
     realm.write(() => {
       realm.delete(historic);
     });
+
+    await stopLocationTask();
 
     goBack();
   }
@@ -68,12 +70,12 @@ export function Arrival() {
         );
       }
 
-      await stopLocationTask();
-
       realm.write(() => {
         historic.status = "arrival";
         historic.updated_at = new Date();
       });
+
+      await stopLocationTask();
 
       Alert.alert("Chegada", "Chegada registrada com sucesso.");
       goBack();
@@ -88,7 +90,7 @@ export function Arrival() {
     setDataNotSynced(updatedAt > lastSync);
 
     const locationsStorage = await getStorageLocations();
-    setCoordinates(locationsStorage)
+    setCoordinates(locationsStorage);
   }
 
   useEffect(() => {
@@ -99,10 +101,8 @@ export function Arrival() {
     <Container>
       <Header title={title} />
 
-      {coordinates.length > 0 && (
-        <Map coordinates={coordinates} />
-      )}
-      
+      {coordinates.length > 0 && <Map coordinates={coordinates} />}
+
       <Content>
         <Label>Placa do veículo</Label>
 
