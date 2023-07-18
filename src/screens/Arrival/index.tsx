@@ -70,9 +70,12 @@ export function Arrival() {
         );
       }
 
+      const locations = await getStorageLocations();
+
       realm.write(() => {
         historic.status = "arrival";
         historic.updated_at = new Date();
+        historic.coords.push(...locations);
       });
 
       await stopLocationTask();
@@ -85,11 +88,10 @@ export function Arrival() {
   }
 
   async function getLocationsInfo() {
-
-    if(!historic) {
-      return
+    if (!historic) {
+      return;
     }
-    
+
     const lastSync = await getLastAsyncTimestamp();
     const updatedAt = historic!.updated_at.getTime();
     setDataNotSynced(updatedAt > lastSync);
