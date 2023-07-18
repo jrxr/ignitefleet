@@ -26,6 +26,7 @@ import { getLastAsyncTimestamp } from "../../libs/asyncStorage/syncStorage";
 import { getStorageLocations } from "../../libs/asyncStorage/locationStorage";
 import { ButtonIcon } from "../../components/ButtonIcon";
 import { X } from "phosphor-react-native";
+import { Locations } from "../../components/Locations";
 
 type RouteParamProps = {
   id: string;
@@ -96,7 +97,7 @@ export function Arrival() {
     const updatedAt = historic!.updated_at.getTime();
     setDataNotSynced(updatedAt > lastSync);
 
-    if(historic?.status === 'departure') {
+    if (historic?.status === "departure") {
       const locationsStorage = await getStorageLocations();
       setCoordinates(locationsStorage);
     } else {
@@ -115,6 +116,11 @@ export function Arrival() {
       {coordinates.length > 0 && <Map coordinates={coordinates} />}
 
       <Content>
+        <Locations
+          departure={{ label: "Saída", description: "Saída teste" }}
+          arrival={{ label: "Chegada", description: "Chegada teste" }}
+        />
+
         <Label>Placa do veículo</Label>
 
         <LicensePlate>{historic?.license_plate}</LicensePlate>
